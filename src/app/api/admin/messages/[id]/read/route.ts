@@ -6,8 +6,9 @@ import { verifyToken } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params;
     const cookieStore = await cookies();
     const token = cookieStore.get("elvora_token")?.value;
 
@@ -19,8 +20,6 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     if (!decoded) {
       return NextResponse.json({ error: "Invalid token" }, { status: 401 });
     }
-
-    const { id } = params;
 
     const message = await prisma.message.update({
       where: { id },
