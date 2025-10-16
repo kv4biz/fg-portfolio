@@ -1,0 +1,262 @@
+//prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String  @id @default(cuid())
+  firstName String?
+  lastName  String?
+  email     String  @unique
+  password  String
+  avatarUrl String?
+
+  siteSettings SiteSettings?
+  socialLinks  SocialLink[]
+  contactInfo  ContactInfo?
+  hero         Hero?
+  about        About?
+  portfolios   Portfolio[]
+  services     Service[]
+  testimonials Testimonial[]
+  blogs        Blog[]
+  messages     Message[]
+  mediaUsage   MediaUsage?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSettings {
+  id            String  @id @default(cuid())
+  siteName      String
+  description   String?
+  keywords      String?
+  footerText    String?
+  logoType      String  @default("text") // "text" or "image"
+  logoText      String?
+  logoUrl       String?
+  faviconUrl    String?
+  ogTitle       String?
+  ogDescription String?
+  socialImage   String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  updatedAt DateTime @updatedAt
+}
+
+model SocialLink {
+  id   String @id @default(cuid())
+  name String
+  link String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ContactInfo {
+  id        String  @id @default(cuid())
+  email     String
+  phone     String?
+  whatsapp  String?
+  location  String?
+  workDays  String?
+  workHours String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Hero {
+  id          String  @id @default(cuid())
+  title       String
+  subtitle    String?
+  description String?
+  bgImageUrl  String?
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  updatedAt DateTime @updatedAt
+}
+
+model About {
+  id          String      @id @default(cuid())
+  title       String
+  description String
+  aboutImage  String?
+  lists       AboutList[]
+  stats       AboutStat[]
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  updatedAt DateTime @updatedAt
+}
+
+model AboutList {
+  id      String          @id @default(cuid())
+  aboutId String
+  title   String?
+  items   AboutListItem[]
+  about   About           @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+}
+
+model AboutListItem {
+  id       String    @id @default(cuid())
+  listId   String
+  mainText String
+  subText  String?
+  list     AboutList @relation(fields: [listId], references: [id], onDelete: Cascade)
+}
+
+model AboutStat {
+  id      String @id @default(cuid())
+  aboutId String
+  number  Int
+  text    String
+  about   About  @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+}
+
+model Portfolio {
+  id          String           @id @default(cuid())
+  type        PortfolioType
+  title       String
+  category    String?
+  description String?
+  images      PortfolioImage[]
+  videoUrl    String?
+  posterUrl   String?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PortfolioImage {
+  id          String    @id @default(cuid())
+  portfolioId String
+  url         String
+  portfolio   Portfolio @relation(fields: [portfolioId], references: [id], onDelete: Cascade)
+}
+
+enum PortfolioType {
+  PHOTOGRAPHY
+  CINEMATOGRAPHY
+}
+
+model Service {
+  id          String        @id @default(cuid())
+  title       String
+  description String
+  items       ServiceItem[]
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  updatedAt DateTime @updatedAt
+}
+
+model ServiceItem {
+  id        String  @id @default(cuid())
+  serviceId String
+  text      String
+  service   Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model Testimonial {
+  id        String  @id @default(cuid())
+  name      String
+  job       String?
+  review    String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Blog {
+  id       String      @id @default(cuid())
+  title    String
+  date     DateTime    @default(now())
+  readTime Int         @default(3)
+  tag      String?
+  featured Boolean     @default(false)
+  images   BlogImage[]
+  content  String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BlogImage {
+  id     String @id @default(cuid())
+  blogId String
+  url    String
+  blog   Blog   @relation(fields: [blogId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id      String  @id @default(cuid())
+  name    String
+  email   String
+  subject String?
+  read    Boolean @default(false)
+  message String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model MediaUsage {
+  id             String   @id @default(cuid())
+  allocatedBytes BigInt   @default(2147483648) // 2GB default
+  media          Media[]
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt      DateTime @updatedAt
+}
+
+model Media {
+  id            String         @id @default(cuid())
+  url           String
+  publicId      String?
+  bytes         BigInt         @default(0)
+  mediaType     MediaType
+  referenceType ReferenceType?
+  referenceId   String?
+  usageId       String?
+  usage         MediaUsage?    @relation(fields: [usageId], references: [id], onDelete: Cascade)
+  createdAt     DateTime       @default(now())
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+}
+
+enum ReferenceType {
+  HERO
+  ABOUT
+  PORTFOLIO
+  BLOG
+  TESTIMONIAL
+  SERVICE
+  OTHER
+}
