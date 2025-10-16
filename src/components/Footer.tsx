@@ -1,4 +1,3 @@
-// src/components/Footer.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -10,43 +9,60 @@ interface SiteSettings {
   footerText: string | null;
 }
 
+interface UserInfo {
+  firstName: string;
+  lastName: string;
+}
+
 const Footer = () => {
   const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch site settings on component mount
   useEffect(() => {
-    fetchSiteSettings();
+    fetchData();
   }, []);
 
-  const fetchSiteSettings = async () => {
+  const fetchData = async () => {
     try {
-      const res = await fetch("/api/site-settings");
-      if (res.ok) {
-        const data = await res.json();
-        setSiteSettings(data.siteSettings);
-      } else {
-        // Fallback to default settings if API fails
-        setSiteSettings({
-          siteName: "ELENA MORRISON",
-          description: "Photography & Cinematography",
-          footerText: "© 2025 Elena Morrison. All rights reserved.",
-        });
-      }
-    } catch (error) {
-      console.error("Error fetching site settings:", error);
-      // Fallback to default settings
-      setSiteSettings({
+      // Fetch both site settings and user info
+      const [settingsRes, userRes] = await Promise.all([fetch("/api/site-settings"), fetch("/api/user")]);
+
+      let settings: SiteSettings = {
         siteName: "ELENA MORRISON",
         description: "Photography & Cinematography",
-        footerText: "© 2025 Elena Morrison. All rights reserved.",
-      });
+        footerText: "© {year} Elena Morrison. All rights reserved.",
+      };
+
+      if (settingsRes.ok) {
+        const data = await settingsRes.json();
+        settings = data.siteSettings;
+      }
+
+      setSiteSettings(settings);
+
+      if (userRes.ok) {
+        const data = await userRes.json();
+        if (data.success) {
+          setUserInfo({
+            firstName: data.user.firstName,
+            lastName: data.user.lastName,
+          });
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   const currentYear = new Date().getFullYear();
+
+  const displayName =
+    userInfo && (userInfo.firstName || userInfo.lastName)
+      ? `${userInfo.firstName || ""} ${userInfo.lastName || ""}`.trim()
+      : siteSettings?.siteName || "ELENA MORRISON";
 
   return (
     <footer className="bg-black text-white py-12">
@@ -60,11 +76,12 @@ const Footer = () => {
               </>
             ) : (
               <>
-                <h3 className="text-xl font-thin tracking-wider">{siteSettings?.siteName || "ELENA MORRISON"}</h3>
-                <p className="text-gray-400 text-sm tracking-wide">{siteSettings?.description || "Photography & Cinematography"}</p>
+                <h3 className="text-xl font-thin tracking-wider">{displayName}</h3>
+                <p className="text-gray-400 text-sm tracking-wide">{siteSettings?.siteName || "Photography & Cinematography"}</p>
               </>
             )}
           </div>
+
           <div className="text-gray-400 text-sm tracking-wide">
             {isLoading ? (
               <div className="h-4 w-64 bg-gray-700 rounded animate-pulse"></div>
@@ -72,7 +89,8 @@ const Footer = () => {
               <>
                 {siteSettings?.footerText
                   ? siteSettings.footerText.replace("{year}", currentYear.toString())
-                  : `© ${currentYear} ${siteSettings?.siteName || "ELENA MORRISON"}. All rights reserved.`}
+                  : `© ${currentYear} ${displayName}. All rights reserved.`}
+
                 <Link href="/admin" className="ml-4 text-xs opacity-30 hover:opacity-100 transition-opacity duration-300">
                   Admin
                 </Link>

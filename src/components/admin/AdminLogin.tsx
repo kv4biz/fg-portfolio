@@ -1,4 +1,4 @@
-//src/components/admin/AdminLogin.tsx
+// src/components/admin/AdminLogin.tsx
 "use client";
 
 import { useState } from "react";
@@ -8,6 +8,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import Image from "next/image";
+
+// Define props interface
+interface AdminLoginProps {
+  onLogin: () => void;
+}
 
 // Right side image component
 function LoginImageSide() {
@@ -23,7 +28,7 @@ function LoginImageSide() {
   );
 }
 
-export default function AdminLogin() {
+export default function AdminLogin({ onLogin }: AdminLoginProps) {
   const [credentials, setCredentials] = useState({
     email: "",
     password: "",
@@ -59,6 +64,11 @@ export default function AdminLogin() {
       if (!res.ok) throw new Error(data.error || "Login failed");
 
       toast.success("Login successful! Redirecting...");
+
+      // Call the onLogin prop to update parent state
+      onLogin();
+
+      // Optional: You can also reload or redirect here
       setTimeout(() => {
         window.location.reload();
       }, 100);
