@@ -199,7 +199,7 @@ const General = ({ siteSettings, onUpdateSiteSettings, onUploadImage, onRefreshD
               <Label>Logo Image</Label>
               <div className="flex items-center space-x-6">
                 {siteSettings.logoUrl && (
-                  <div className="w-20 h-20 border rounded-lg overflow-hidden">
+                  <div className="w-20 h-20 border  overflow-hidden">
                     <Image src={siteSettings.logoUrl} alt="Logo preview" className="w-full h-full object-contain" width={1000} height={1000} />
                   </div>
                 )}
@@ -294,7 +294,7 @@ const General = ({ siteSettings, onUpdateSiteSettings, onUploadImage, onRefreshD
             <Label>Social Media Image</Label>
             <div className="flex items-center space-x-6">
               {siteSettings.socialImage && (
-                <div className="w-32 h-32 border rounded-lg overflow-hidden">
+                <div className="w-32 h-32 border  overflow-hidden">
                   <Image
                     src={siteSettings.socialImage}
                     alt="Social image preview"

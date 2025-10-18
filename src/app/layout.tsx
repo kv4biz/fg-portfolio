@@ -35,7 +35,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   const title = settings?.siteName || "ElVora";
   const description = settings?.description || "";
-  const image = settings?.logoUrl || "/default-social.jpg";
+  const image = settings?.socialImage || settings?.logoUrl || "/default-social.jpg";
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elvora.com";
 
   return {

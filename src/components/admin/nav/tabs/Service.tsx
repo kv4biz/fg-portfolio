@@ -377,7 +377,7 @@ const Service = () => {
           </section>
 
           {/* Preview Notes */}
-          <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+          <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-950/20 ">
             <p className="text-xs text-blue-700 dark:text-blue-300">
               <strong>Preview Notes:</strong> This shows how your services section will appear on the actual website. The preview includes a header
               section and a grid of service cards with descriptions and feature lists.

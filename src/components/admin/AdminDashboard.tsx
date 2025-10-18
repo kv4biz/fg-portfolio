@@ -264,7 +264,7 @@ export default function AdminDashboard({ onLogout }: AdminDashboardProps) {
           <Sidebar className="border-r">
             <SidebarHeader className="border-b p-4">
               <div className="flex items-center space-x-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
+                <div className="flex h-8 w-8 items-center justify-center  bg-primary text-primary-foreground">
                   <Camera className="h-4 w-4" />
                 </div>
                 <div>

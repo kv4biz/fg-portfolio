@@ -593,7 +593,7 @@ const About = () => {
           </section>
 
           {/* Preview Notes */}
-          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 ">
             <p className="text-xs text-blue-700 dark:text-blue-300">
               <strong>Preview Notes:</strong> This shows how your about section will appear on the actual website. The layout is responsive and will
               stack on mobile devices. Lists appear with elegant left borders and proper spacing.

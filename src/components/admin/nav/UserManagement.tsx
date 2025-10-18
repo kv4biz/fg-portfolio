@@ -227,7 +227,7 @@ const UserManagement = () => {
         {/* Desktop Detail Panel (Right Side) */}
         {showDetailPanel && selectedMessage && (
           <div className="hidden lg:block w-1/2 ml-4">
-            <div className="border rounded-lg h-full bg-card">
+            <div className="border  h-full bg-card">
               <MessageDetail
                 message={selectedMessage}
                 onClose={closeDetailPanel}

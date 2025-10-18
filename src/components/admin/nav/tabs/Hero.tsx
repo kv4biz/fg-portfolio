@@ -365,7 +365,7 @@ const Hero = () => {
           </section>
 
           {/* Preview Notes */}
-          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950/20 ">
             <p className="text-xs text-blue-700 dark:text-blue-300">
               <strong>Preview Notes:</strong> This shows how your hero section will appear on the actual website. The background image has a dark
               overlay for better text readability. Titles are automatically split into multiple lines for better visual balance.

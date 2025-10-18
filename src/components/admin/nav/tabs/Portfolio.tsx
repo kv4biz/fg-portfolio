@@ -626,7 +626,7 @@ const Portfolio = () => {
           </div>
 
           {/* Preview Notes */}
-          <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-950/20 rounded-lg">
+          <div className="mt-6 p-3 bg-blue-50 dark:bg-blue-950/20 ">
             <p className="text-xs text-blue-700 dark:text-blue-300">
               <strong>Preview Notes:</strong> This shows how your portfolio section will appear on the actual website. The preview includes tab
               navigation between photography and cinematography, category filters for photography, and hover effects with image overlays. Items are

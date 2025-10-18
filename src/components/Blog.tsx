@@ -49,7 +49,7 @@ const Blog = () => {
 
   const featuredPost = blogPosts.find((post) => post.featured);
   const regularPosts = blogPosts.filter((post) => !post.featured);
-  const visiblePosts = showAllPosts ? regularPosts : regularPosts.slice(0, 5);
+  const visiblePosts = showAllPosts ? regularPosts : regularPosts.slice(0, 3);
 
   const openModal = (post: BlogPost) => {
     setSelectedPost(post);
@@ -230,14 +230,15 @@ const Blog = () => {
               ))}
             </div>
 
-            {/* View More Button */}
-            {regularPosts.length > 5 && !showAllPosts && (
+            {/* View More / Show Less Button */}
+            {regularPosts.length && (
               <div className="text-center mt-12">
                 <button
-                  onClick={() => setShowAllPosts(true)}
-                  className="inline-block bg-black text-white px-8 py-3 tracking-widest text-sm uppercase hover:bg-gray-800 transition-colors duration-300"
+                  onClick={() => setShowAllPosts(!showAllPosts)}
+                  className="inline-flex items-center space-x-2 bg-black text-white px-8 py-3 tracking-widest text-sm uppercase hover:bg-gray-800 transition-colors duration-300"
                 >
-                  View More Posts
+                  <span>{showAllPosts ? "Show Less Posts" : "Show All Posts"}</span>
+                  <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${showAllPosts ? "-rotate-45" : "translate-x-1"}`} />
                 </button>
               </div>
             )}
@@ -261,7 +262,7 @@ const Blog = () => {
           {/* Modal Content */}
           <div className="w-full min-h-screen">
             {/* Header Image */}
-            <div className="relative h-64 md:h-96 lg:h-[600px]  overflow-hidden">
+            <div className="relative h-[440px] md:h-[560px] lg:h-[600px] object-contain overflow-hidden">
               {selectedPost.images.length > 0 ? (
                 <>
                   <ImageWithFallback

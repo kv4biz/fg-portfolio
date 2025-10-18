@@ -207,7 +207,7 @@ const Contact = ({ contactInfo, socialLinks, onUpdateContactInfo, onUpdateSocial
         <CardContent className="space-y-4">
           {links.length > 0 ? (
             links.map((link) => (
-              <div key={link.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 border rounded-lg bg-card">
+              <div key={link.id} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 p-4 border  bg-card">
                 <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
                   <div className="space-y-2">
                     <Label htmlFor={`name-${link.id}`} className="text-xs font-medium">
@@ -242,14 +242,14 @@ const Contact = ({ contactInfo, socialLinks, onUpdateContactInfo, onUpdateSocial
               </div>
             ))
           ) : (
-            <div className="text-center py-8 text-muted-foreground border-2 border-dashed rounded-lg">
+            <div className="text-center py-8 text-muted-foreground border-2 border-dashed ">
               <p>No social links added yet.</p>
               <p className="text-sm">Click Add Social Link to get started.</p>
             </div>
           )}
 
           {links.length > 0 && validSocialLinks.length === 0 && (
-            <div className="text-center text-sm text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200">
+            <div className="text-center text-sm text-amber-600 bg-amber-50 p-3  border border-amber-200">
               Please fill in both platform name and URL for social links to save them.
             </div>
           )}

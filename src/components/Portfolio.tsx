@@ -196,7 +196,7 @@ const Portfolio = () => {
                 </div>
 
                 {/* View More Button for Photography */}
-                {filteredPhotography.length > 6 && !showAllPhotography && (
+                {filteredPhotography.length && !showAllPhotography && (
                   <div className="text-center">
                     <button
                       onClick={() => setShowAllPhotography(true)}
@@ -351,7 +351,7 @@ const Portfolio = () => {
             </div>
 
             {/* Info Section */}
-            <div className="lg:w-5/12 md:w-2/5 h-1/2 lg:h-full bg-white p-8 flex flex-col justify-center overflow-y-auto">
+            <div className="lg:w-1/4 md:w-2/5 h-1/2 lg:h-full bg-white p-8 flex flex-col justify-center overflow-y-auto">
               <div className="space-y-6">
                 {selectedItem.category && (
                   <div>

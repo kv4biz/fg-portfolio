@@ -77,7 +77,7 @@ const MessageTable = ({
           </div>
         </div>
 
-        <div className="border rounded-lg">
+        <div className="border ">
           <Table>
             <TableHeader>
               <TableRow>
