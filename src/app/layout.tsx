@@ -80,7 +80,7 @@ export async function generateMetadata(): Promise<Metadata> {
       "og:type": "website",
     },
     icons: {
-      icon: settings?.faviconUrl || "/favicon.ico",
+      icon: settings?.faviconUrl || "/default.svg",
     },
   };
 }

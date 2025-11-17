@@ -72,7 +72,7 @@ const Navigation = () => {
     if (siteSettings.logoType === "image" && siteSettings.logoUrl) {
       return (
         <div className="flex items-center">
-          <Image src={siteSettings.logoUrl} alt={siteSettings.siteName} width={120} height={40} className="h-10 w-auto object-contain" priority />
+          <Image src={siteSettings.logoUrl} alt={siteSettings.siteName} width={120} height={40} className="h-12 w-auto object-contain" priority />
         </div>
       );
     }

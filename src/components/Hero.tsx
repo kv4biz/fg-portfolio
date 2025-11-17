@@ -72,13 +72,13 @@ const Hero = () => {
 
   return (
     <section id="home" className="relative h-screen w-full overflow-hidden">
-      <div className="absolute inset-0">
+      <div className="absolute inset-0 flex lg:justify-center bg-black">
         <ImageWithFallback
           src={heroData.bgImageUrl || "/placeholder-hero.jpg"}
           alt="Luxury fashion portrait"
-          className="w-full h-full object-cover"
+          className="w-full h-full lg:w-10/12 object-cover object-top"
         />
-        <div className="absolute inset-0 bg-black/40"></div>
+        <div className="absolute inset-0 bg-black/45"></div>
       </div>
 
       <div className="relative z-10 flex items-center justify-center h-full">
