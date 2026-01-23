@@ -238,7 +238,19 @@ const Portfolio = () => {
     setShowDetailPanel(true);
   };
 
-  const closeDetailPanel = () => {
+  const closeDetailPanel = async () => {
+    // Clean up temp images if user cancels without saving
+    if (tempImages.length > 0 && !selectedItem) {
+      try {
+        await fetch("/api/admin/portfolio/temp", {
+          method: "DELETE",
+          credentials: "include",
+        });
+      } catch (err) {
+        console.warn("Failed to cleanup temp images:", err);
+      }
+    }
+    
     setShowDetailPanel(false);
     setSelectedItem(null);
     setFormData({

@@ -68,6 +68,14 @@ export async function POST(req: Request) {
     const updatedAbout = await prisma.about.update({
       where: { id: about.id },
       data: { aboutImage: result.url },
+      include: {
+        lists: {
+          include: {
+            items: true,
+          },
+        },
+        stats: true,
+      },
     });
 
     return NextResponse.json({
@@ -125,6 +133,14 @@ export async function DELETE(req: Request) {
     const updatedAbout = await prisma.about.update({
       where: { id: aboutId },
       data: { aboutImage: null },
+      include: {
+        lists: {
+          include: {
+            items: true,
+          },
+        },
+        stats: true,
+      },
     });
 
     return NextResponse.json({

@@ -495,19 +495,32 @@ export class MediaService {
 
   /**
    * Clean up orphaned temporary images (temp images that weren't attached to any portfolio)
+   * @param userId - User ID
+   * @param referenceType - Type of reference (PORTFOLIO, BLOG, etc.)
+   * @param immediate - If true, delete all temp images regardless of age. If false, only delete images older than 1 hour.
    */
-  static async cleanupOrphanedTempImages(userId: string, referenceType: ReferenceType) {
+  static async cleanupOrphanedTempImages(userId: string, referenceType: ReferenceType, immediate: boolean = false) {
     try {
-      // Find temp media older than 1 hour
-      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      // Build where clause
+      const whereClause: {
+        referenceType: ReferenceType;
+        referenceId: { startsWith: string };
+        usage: { userId: string };
+        createdAt?: { lt: Date };
+      } = {
+        referenceType,
+        referenceId: { startsWith: "temp-" },
+        usage: { userId },
+      };
+
+      // Only add time filter if not immediate cleanup
+      if (!immediate) {
+        const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+        whereClause.createdAt = { lt: oneHourAgo };
+      }
 
       const orphanedTempMedia = await prisma.media.findMany({
-        where: {
-          referenceType,
-          referenceId: { startsWith: "temp-" },
-          usage: { userId },
-          createdAt: { lt: oneHourAgo },
-        },
+        where: whereClause,
       });
 
       for (const media of orphanedTempMedia) {

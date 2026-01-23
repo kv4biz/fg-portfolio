@@ -49,3 +49,31 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Failed to upload temporary images" }, { status: 500 });
   }
 }
+
+// DELETE endpoint to clean up temporary media when user cancels
+export async function DELETE() {
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("elvora_token")?.value;
+    if (!token) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+    const decoded = verifyToken(token);
+    if (!decoded) return NextResponse.json({ error: "Invalid token" }, { status: 401 });
+
+    // Clean up all temporary blog media for this user (immediate = true)
+    const result = await MediaService.cleanupOrphanedTempImages(decoded.userId, ReferenceType.BLOG, true);
+
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      deletedCount: result.deletedCount,
+      message: "Temporary blog images cleaned up successfully",
+    });
+  } catch (err) {
+    console.error("Blog temporary cleanup error:", err);
+    return NextResponse.json({ error: "Failed to cleanup temporary images" }, { status: 500 });
+  }
+}
