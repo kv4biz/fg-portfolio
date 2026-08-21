@@ -53,9 +53,15 @@ const Portfolio = () => {
   const cinematographyItems = portfolioItems.filter((item) => item.type === "CINEMATOGRAPHY");
 
   // Get unique categories from photography items
-  const photoCategories = ["All", ...Array.from(new Set(photographyItems.filter((item) => item.category).map((item) => item.category!)))];
+  const photoCategories = [
+    "All",
+    ...Array.from(new Set(photographyItems.filter((item) => item.category).map((item) => item.category!))),
+  ];
 
-  const filteredPhotography = activePhotoFilter === "All" ? photographyItems : photographyItems.filter((item) => item.category === activePhotoFilter);
+  const filteredPhotography =
+    activePhotoFilter === "All"
+      ? photographyItems
+      : photographyItems.filter((item) => item.category === activePhotoFilter);
 
   const visiblePhotography = showAllPhotography ? filteredPhotography : filteredPhotography.slice(0, 6);
   const visibleCinematography = showAllCinematography ? cinematographyItems : cinematographyItems.slice(0, 4);
@@ -84,6 +90,76 @@ const Portfolio = () => {
     }
   };
 
+  const getVideoInfo = (url: string | null) => {
+    if (!url) {
+      return {
+        type: "unknown" as const,
+        src: "",
+      };
+    }
+
+    try {
+      const parsedUrl = new URL(url);
+      const hostname = parsedUrl.hostname.replace("www.", "");
+
+      // youtube.com/watch?v=VIDEO_ID
+      if (hostname === "youtube.com" || hostname === "m.youtube.com") {
+        let videoId = "";
+
+        if (parsedUrl.pathname === "/watch") {
+          videoId = parsedUrl.searchParams.get("v") || "";
+        }
+
+        // youtube.com/shorts/VIDEO_ID
+        else if (parsedUrl.pathname.startsWith("/shorts/")) {
+          videoId = parsedUrl.pathname.split("/shorts/")[1]?.split("/")[0] || "";
+        }
+
+        // youtube.com/embed/VIDEO_ID
+        else if (parsedUrl.pathname.startsWith("/embed/")) {
+          videoId = parsedUrl.pathname.split("/embed/")[1]?.split("/")[0] || "";
+        }
+
+        if (videoId) {
+          return {
+            type: "youtube" as const,
+            src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&playsinline=1&rel=0`,
+          };
+        }
+      }
+
+      // youtu.be/VIDEO_ID
+      if (hostname === "youtu.be") {
+        const videoId = parsedUrl.pathname.slice(1).split("/")[0];
+
+        if (videoId) {
+          return {
+            type: "youtube" as const,
+            src: `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&playsinline=1&rel=0`,
+          };
+        }
+      }
+
+      // Direct video file
+      if (/\.(mp4|webm|ogg|mov)(\?.*)?$/i.test(url)) {
+        return {
+          type: "direct" as const,
+          src: url,
+        };
+      }
+
+      return {
+        type: "unknown" as const,
+        src: url,
+      };
+    } catch {
+      return {
+        type: "unknown" as const,
+        src: url,
+      };
+    }
+  };
+
   if (isLoading) {
     return (
       <section id="portfolio" className="py-24 bg-gray-100">
@@ -92,7 +168,8 @@ const Portfolio = () => {
             <h2 className="text-4xl md:text-5xl font-thin tracking-wider text-black mb-4">PORTFOLIO</h2>
             <div className="w-24 h-px bg-black mx-auto opacity-60 mb-6"></div>
             <p className="text-gray-600 tracking-wide max-w-2xl mx-auto">
-              A curated selection of photography and cinematography work, showcasing elegance and sophistication across various luxury projects
+              A curated selection of photography and cinematography work, showcasing elegance and sophistication across
+              various luxury projects
             </p>
           </div>
 
@@ -121,7 +198,8 @@ const Portfolio = () => {
           <h2 className="text-4xl md:text-5xl font-thin tracking-wider text-black mb-4">PORTFOLIO</h2>
           <div className="w-24 h-px bg-black mx-auto opacity-60 mb-6"></div>
           <p className="text-gray-600 tracking-wide max-w-2xl mx-auto">
-            A curated selection of photography and cinematography work, showcasing elegance and sophistication across various luxury projects
+            A curated selection of photography and cinematography work, showcasing elegance and sophistication across
+            various luxury projects
           </p>
         </div>
 
@@ -158,7 +236,9 @@ const Portfolio = () => {
                     key={category}
                     onClick={() => setActivePhotoFilter(category)}
                     className={`px-6 py-2 tracking-wide text-sm transition-colors duration-300 ${
-                      activePhotoFilter === category ? "bg-black text-white" : "bg-white text-black border border-gray-200 hover:bg-gray-50"
+                      activePhotoFilter === category
+                        ? "bg-black text-white"
+                        : "bg-white text-black border border-gray-200 hover:bg-gray-50"
                     }`}
                   >
                     {category}
@@ -186,7 +266,9 @@ const Portfolio = () => {
                       </div>
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all duration-500">
                         <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-500">
-                          {item.category && <p className="text-xs tracking-widest uppercase opacity-80 mb-1">{item.category}</p>}
+                          {item.category && (
+                            <p className="text-xs tracking-widest uppercase opacity-80 mb-1">{item.category}</p>
+                          )}
                           <h3 className="text-lg tracking-wide mb-2">{item.title}</h3>
                           {item.description && <p className="text-sm opacity-90 line-clamp-2">{item.description}</p>}
                         </div>
@@ -338,9 +420,35 @@ const Portfolio = () => {
               ) : (
                 <div className="w-full h-full flex items-center justify-center">
                   {selectedItem.videoUrl ? (
-                    <video src={selectedItem.videoUrl} controls className="max-w-full max-h-full" autoPlay>
-                      Your browser does not support the video tag.
-                    </video>
+                    (() => {
+                      const video = getVideoInfo(selectedItem.videoUrl);
+
+                      if (video.type === "youtube") {
+                        return (
+                          <iframe
+                            src={video.src}
+                            title={selectedItem.title}
+                            className="w-full h-full"
+                            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                            allowFullScreen
+                          />
+                        );
+                      }
+
+                      if (video.type === "direct") {
+                        return (
+                          <video src={video.src} controls autoPlay muted playsInline className="max-w-full max-h-full">
+                            Your browser does not support the video tag.
+                          </video>
+                        );
+                      }
+
+                      return (
+                        <div className="text-white text-center">
+                          <p>Unable to play this video.</p>
+                        </div>
+                      );
+                    })()
                   ) : (
                     <div className="text-white text-center">
                       <p>No video available</p>
@@ -360,7 +468,9 @@ const Portfolio = () => {
                 )}
                 <h2 className="text-2xl md:text-3xl font-thin tracking-wide text-black">{selectedItem.title}</h2>
                 <div className="w-16 h-px bg-black opacity-60"></div>
-                {selectedItem.description && <p className="text-gray-600 leading-relaxed">{selectedItem.description}</p>}
+                {selectedItem.description && (
+                  <p className="text-gray-600 leading-relaxed">{selectedItem.description}</p>
+                )}
                 {selectedItem.type === "PHOTOGRAPHY" && selectedItem.images.length > 1 && (
                   <div className="text-sm text-gray-500">
                     {currentImageIndex + 1} of {selectedItem.images.length} images
